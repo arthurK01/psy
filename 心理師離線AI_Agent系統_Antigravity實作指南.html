@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>在自己的電腦上，打造你的 AI 知識庫系統｜心理師專屬指南</title>
+<style>
+:root{
+  --bg:#f5f6f8;--surface:#ffffff;--ink:#1f2933;--ink-soft:#475569;--ink-mute:#64748b;
+  --primary:#0f766e;--primary-d:#0b5d56;--primary-l:#e6f4f1;
+  --accent:#e09f3e;--accent-l:#fbf2e0;
+  --danger:#c1432e;--danger-l:#fcebe7;--good:#2f7d54;--good-l:#e7f3ea;
+  --line:#e2e8f0;--radius:16px;
+  --shadow:0 4px 18px rgba(15,23,42,.06);--shadow-h:0 10px 30px rgba(15,23,42,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Segoe UI",system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.85;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--primary-d);text-decoration:none}
+a:hover{text-decoration:underline}
+code{background:#eef2f1;padding:1px 6px;border-radius:5px;font-size:.86em;font-family:Consolas,"Courier New",monospace;color:var(--primary-d)}
+
+/* ===== sticky mobile bar (hidden on desktop) ===== */
+.mobilebar{
+  display:none;position:sticky;top:0;z-index:40;background:rgba(255,255,255,.93);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  align-items:center;justify-content:space-between;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));
+}
+.mobilebar .ttl{font-weight:800;font-size:.95rem;color:var(--primary-d)}
+.mobilebar button{
+  background:var(--primary-l);color:var(--primary-d);border:none;font-weight:700;
+  font-size:.82rem;padding:7px 13px;border-radius:999px;cursor:pointer;font-family:inherit;
+}
+
+/* ===== Hero ===== */
+.hero{background:linear-gradient(135deg,#0f766e 0%,#115e59 55%,#134e4a 100%);color:#fff;padding:72px 24px 64px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 0%,rgba(224,159,62,.25),transparent 45%)}
+.hero-inner{max-width:880px;margin:0 auto;position:relative;z-index:1}
+.hero .eyebrow{display:inline-block;letter-spacing:.18em;font-size:.8rem;font-weight:600;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:999px;margin-bottom:22px}
+.hero h1{font-size:2.5rem;line-height:1.3;margin:0 0 18px;font-weight:800;letter-spacing:.01em}
+.hero p{font-size:1.12rem;color:#d6efe9;margin:0 auto;max-width:640px}
+.hero .tagline{margin-top:28px;font-size:1rem;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:16px 22px;display:inline-block}
+
+/* ===== Layout ===== */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:248px 1fr;gap:40px}
+.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding:22px 0;font-size:.92rem}
+.toc h4{margin:0 0 12px;font-size:.78rem;letter-spacing:.12em;color:var(--ink-mute);text-transform:uppercase}
+.toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;margin:2px 0}
+.toc a{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:10px;color:var(--ink-soft)}
+.toc a::before{content:counter(toc);font-weight:700;color:var(--primary);font-size:.82rem;min-width:16px}
+.toc a:hover{background:var(--primary-l);text-decoration:none;color:var(--primary-d)}
+main{padding:48px 0 80px;min-width:0}
+
+/* ===== mobile quick nav (hidden on desktop) ===== */
+.qnav{display:none;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 22px}
+.qnav a{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:.85rem;font-weight:600;color:var(--ink-soft);display:flex;gap:8px;align-items:center;box-shadow:var(--shadow)}
+.qnav a .n{flex:none;width:24px;height:24px;border-radius:7px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:800}
+
+/* ===== Intro ===== */
+.intro{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:var(--radius);padding:24px 28px;margin-bottom:32px;box-shadow:var(--shadow)}
+.intro h3{margin:0 0 10px;font-size:1.12rem;color:var(--primary-d)}
+.intro p{margin:0 0 10px;color:var(--ink-soft)}
+.intro .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.intro .chip{background:var(--primary-l);color:var(--primary-d);font-size:.84rem;font-weight:600;padding:5px 13px;border-radius:999px}
+.tap-hint{display:none;text-align:center;font-size:.8rem;color:var(--ink-mute);margin:0 0 14px}
+
+/* ===== Section (details) ===== */
+details.section{margin-bottom:14px;scroll-margin-top:16px;background:transparent}
+details.section>summary{
+  list-style:none;cursor:pointer;display:flex;gap:14px;align-items:center;
+  font-size:1.62rem;font-weight:800;color:var(--ink);margin:0 0 8px;padding:6px 0;
+}
+details.section>summary::-webkit-details-marker{display:none}
+details.section>summary .num{flex:none;width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:1.1rem;font-weight:800;box-shadow:var(--shadow)}
+details.section>summary .chev{margin-left:auto;color:var(--ink-mute);font-size:.95rem;transition:.2s}
+details.section[open]>summary .chev{transform:rotate(180deg)}
+.body{padding-left:56px}
+.lead{color:var(--ink-mute);font-size:1.02rem;margin:0 0 22px}
+h3.sub{font-size:1.18rem;margin:30px 0 12px;color:var(--primary-d);font-weight:700}
+h4.subsub{font-size:1.02rem;margin:20px 0 10px;color:var(--ink);font-weight:700}
+.body p{margin:0 0 14px}
+.body ul,.body ol{margin:0 0 16px;padding-left:22px}
+.body li{margin:6px 0}
+strong{color:var(--ink);font-weight:700}
+em{font-style:normal;background:var(--accent-l);padding:1px 5px;border-radius:5px;font-weight:600;color:#9a6a18}
+
+/* ===== Tables ===== */
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;border-radius:var(--radius);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;background:var(--surface);font-size:.96rem;min-width:480px}
+thead th{background:var(--primary);color:#fff;font-weight:700;text-align:left;padding:13px 16px;font-size:.95rem}
+tbody td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink-soft)}
+tbody tr:nth-child(even){background:#fafbfc}
+tbody td:first-child{font-weight:600;color:var(--ink)}
+table.compare td.bad{background:var(--danger-l)}
+table.compare td.good{background:var(--good-l)}
+table.compare thead th.col-bad{background:#a23a29}
+table.compare thead th.col-good{background:var(--good)}
+.swipe{display:none;text-align:center;font-size:.78rem;color:var(--ink-mute);margin:-8px 0 14px}
+
+/* ===== Callouts ===== */
+.callout{border-radius:var(--radius);padding:18px 22px;margin:22px 0;border-left:5px solid;box-shadow:var(--shadow)}
+.callout .t{font-weight:700;display:flex;gap:9px;align-items:center;margin-bottom:6px;font-size:1.02rem}
+.callout p{margin:0}.callout p+p{margin-top:7px}
+.callout.redline{background:var(--danger-l);border-color:var(--danger)}.callout.redline .t{color:var(--danger)}
+.callout.key{background:var(--primary-l);border-color:var(--primary)}.callout.key .t{color:var(--primary-d)}
+.callout.tip{background:var(--good-l);border-color:var(--good)}.callout.tip .t{color:var(--good)}
+.callout.quote{background:#f1f5f9;border-color:#94a3b8;font-size:1.05rem;color:var(--ink)}
+
+/* ===== Cards ===== */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin:22px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:.2s}
+.card:hover{box-shadow:var(--shadow-h);transform:translateY(-3px)}
+.card .ico{font-size:1.7rem;margin-bottom:8px}
+.card h4{margin:0 0 8px;font-size:1.02rem;color:var(--primary-d)}
+.card p{margin:0;font-size:.9rem;color:var(--ink-soft)}
+
+/* ===== VS ===== */
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:24px 0}
+.vs .side{padding:22px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.vs .web{background:#fff;border:1px solid var(--line)}
+.vs .sys{background:linear-gradient(160deg,#0f766e,#115e59);color:#fff}
+.vs .side .label{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;opacity:.85;font-weight:600}
+.vs .side h4{margin:6px 0 12px;font-size:1.22rem}
+.vs .web h4{color:var(--ink)}
+.vs .side p{margin:0;font-size:.95rem}
+.vs .web p{color:var(--ink-soft)}
+.vs .mid{display:grid;place-items:center;font-weight:800;color:var(--ink-mute);padding:0 18px;font-size:1.1rem}
+
+/* ===== Flow / Tree / Timeline ===== */
+.flow{background:var(--surface);border:1px dashed var(--primary);border-radius:var(--radius);padding:20px;margin:20px 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:center}
+.flow .node{background:var(--primary-l);color:var(--primary-d);font-weight:600;padding:10px 16px;border-radius:10px;font-size:.92rem}
+.flow .arrow{color:var(--accent);font-weight:800;font-size:1.2rem}
+.flow.dim .node{background:#eef1f4;color:var(--ink-mute)}
+.flow .cap{width:100%;text-align:center;font-size:.85rem;font-weight:600}
+.tree{background:#0f2c2a;color:#cdeae4;border-radius:var(--radius);padding:22px 24px;margin:20px 0;font-family:Consolas,"Courier New",monospace;font-size:.88rem;line-height:1.9;overflow-x:auto;box-shadow:var(--shadow-h)}
+.tree .c{color:#7fd1c4}.tree .note{color:#e0a85a}
+.timeline{margin:24px 0}
+.timeline .step{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:14px 0;border-top:1px solid var(--line)}
+.timeline .step:first-child{border-top:none}
+.timeline .when{font-weight:700;color:var(--primary-d)}
+.timeline .when small{display:block;color:var(--ink-mute);font-weight:500;font-size:.82rem}
+.timeline .what{color:var(--ink-soft)}
+
+/* ===== Footer / back-to-top ===== */
+.foot{background:#0f2c2a;color:#bcd9d3;text-align:center;padding:40px 24px;font-size:.92rem}
+.foot strong{color:#fff}
+#toTop{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:1.1rem;box-shadow:var(--shadow-h);cursor:pointer;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+#toTop.show{opacity:1;pointer-events:auto}
+
+/* ===== Responsive ===== */
+@media(max-width:980px){
+  body{font-size:17px}
+  .mobilebar{display:flex}
+  .hero{padding:34px 20px 30px}
+  .hero h1{font-size:1.6rem}
+  .hero p{font-size:.98rem}
+  .hero .tagline{font-size:.86rem;padding:11px 14px;margin-top:16px}
+  .wrap{grid-template-columns:1fr;padding:0 16px;gap:0}
+  .toc{display:none}
+  main{padding:20px 0 70px}
+  .qnav{display:grid}
+  .tap-hint{display:block}
+  .swipe{display:block}
+  details.section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+  details.section>summary{font-size:1.08rem;padding:15px 16px;margin:0}
+  details.section>summary .num{width:34px;height:34px;font-size:.95rem;border-radius:10px}
+  details.section[open]>summary{border-bottom:1px solid var(--line)}
+  .body{padding:14px 16px 18px}
+  .lead{font-size:.94rem;margin:0 0 16px}
+  h3.sub{font-size:1.06rem}
+  .vs{grid-template-columns:1fr}
+  .vs .side{margin:6px 0}
+  .vs .mid{padding:6px}
+  .timeline .step{grid-template-columns:1fr;gap:3px}
+}
+</style>
+</head>
+<body>
+
+<div class="mobilebar">
+  <span class="ttl">心理師 · AI 系統指南</span>
+  <button id="expandAll" type="button">展開全部</button>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">心理師專屬 · 離線 AI 工作系統</span>
+    <h1>在自己的電腦上，<br>打造你的 AI 知識庫系統</h1>
+    <p>從「每次都要重新解釋的網頁版 AI」，升級成讀過你所有教案與個案、會越用越懂你的長期助理。</p>
+    <div class="tagline">主力工具：Gemini Antigravity（基礎）＋ ChatGPT Codex（輔助）</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h4>章節導覽</h4>
+    <ol>
+      <li><a href="#s1">從網頁版搬到自己的電腦</a></li>
+      <li><a href="#s2">為什麼你特別需要離線</a></li>
+      <li><a href="#s3">兩套工具怎麼分工</a></li>
+      <li><a href="#s4">系統長什麼樣子</a></li>
+      <li><a href="#s5">四大實際應用</a></li>
+      <li><a href="#s6">讓系統持續變聰明</a></li>
+      <li><a href="#s7">上手路徑</a></li>
+      <li><a href="#s8">限制與注意事項</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section class="intro">
+      <h3>關於這份指南</h3>
+      <p>這份指南是為你量身整理的。你目前的 AI 使用方式，大概是打開網頁版的 ChatGPT 或 Gemini，問一個問題、得到一個答案。這套作法很方便，但它有個天花板——AI 看不到你累積的東西，每次都從零開始。</p>
+      <p>接下來要談的，是怎麼把 AI 搬進你自己的電腦，讓它真正「住進」你的教案與個案資料裡，成為一位長期、安全、越用越順手的工作夥伴。內容會盡量白話，不需要你會寫程式。</p>
+      <div class="meta">
+        <span class="chip">教案設計</span>
+        <span class="chip">設計風格統一</span>
+        <span class="chip">行事曆規劃</span>
+        <span class="chip">個案紀錄整理與分析</span>
+        <span class="chip">資料不出本機</span>
+      </div>
+    </section>
+
+    <p class="tap-hint">👇 點各章標題可展開／收合</p>
+    <nav class="qnav">
+      <a href="#s1"><span class="n">1</span>搬到自己的電腦</a>
+      <a href="#s2"><span class="n">2</span>為何需要離線</a>
+      <a href="#s3"><span class="n">3</span>兩套工具分工</a>
+      <a href="#s4"><span class="n">4</span>系統長怎樣</a>
+      <a href="#s5"><span class="n">5</span>四大應用</a>
+      <a href="#s6"><span class="n">6</span>持續變聰明</a>
+      <a href="#s7"><span class="n">7</span>上手路徑</a>
+      <a href="#s8"><span class="n">8</span>限制與注意</a>
+    </nav>
+
+    <!-- S1 -->
+    <details class="section" id="s1" open>
+      <summary><span class="num">1</span><span>從網頁版搬到自己的電腦：差別在哪？</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">先把最核心的問題講清楚：「我開 ChatGPT 問就好，為什麼要搞這麼複雜？」</p>
+
+        <h3 class="sub">1.1　你現在的用法，卡在哪裡</h3>
+        <p>你現在的流程大概是：打開一個對話 → 貼上內容 → 得到回答 → 關掉。下次要用，再貼一次。問題出在三件事：</p>
+        <ul>
+          <li>AI <strong>記不得</strong>你上週設計的教案、某個個案的脈絡——每次都要從零解釋。</li>
+          <li>好的回答<strong>埋在幾百則對話裡</strong>，三個月後想找回那一段，像大海撈針。</li>
+          <li>AI 只能<strong>動嘴</strong>，不能動手——它能給建議，但不能幫你把十段錄音轉成逐字稿。</li>
+        </ul>
+        <div class="callout key"><div class="t">🧭 根本原因</div><p>網頁版 AI 看不到你的資料。你貼什麼，它才知道什麼。它不是住在你的工作室裡，而是一位你每次隔著窗口喊話的陌生顧問。</p></div>
+
+        <h3 class="sub">1.2　四個關鍵差異（這才是值得搬家的真正理由）</h3>
+        <div class="tbl"><table class="compare">
+          <thead><tr><th>面向</th><th class="col-bad">網頁版 Gemini／ChatGPT</th><th class="col-good">本機 AI Agent 系統</th></tr></thead>
+          <tbody>
+            <tr><td>AI 讀得到什麼</td><td class="bad">只有你這次貼進去的那段</td><td class="good">你整座資料夾——上百份教案與紀錄都是它的背景知識</td></tr>
+            <tr><td>資料怎麼整理</td><td class="bad">散在一則則對話裡，沒有結構</td><td class="good">分資料夾、分類、可命名，你和 AI 都能秒定位</td></tr>
+            <tr><td>搜尋與重用</td><td class="bad">翻對話紀錄找舊答案</td><td class="good">像查檔案一樣搜，AI 還能跨檔比對、引用</td></tr>
+            <tr><td>越用越好嗎</td><td class="bad">每次從零，不會累積</td><td class="good">每加一份筆記、改一條規則，系統就更貼合你</td></tr>
+            <tr><td>能幫你做事嗎</td><td class="bad">只能給文字建議</td><td class="good">能跑工具：轉逐字稿、生成週排程、畫量表趨勢圖</td></tr>
+          </tbody>
+        </table></div>
+        <p class="swipe">← 左右滑動看完整表格 →</p>
+
+        <h3 class="sub">1.3　對 AI 來說，「整理過的資料」差很多</h3>
+        <p>這是最容易被忽略、卻最關鍵的一點。網頁版你貼一坨文字進去，AI 得當場從頭理解。本機系統裡，資料已經有結構——資料夾名稱、檔名、標題層級、分類標籤——AI 讀的時候等於<strong>先拿到一張地圖</strong>。結構越清楚，它的整理、搜尋、比對就越準、越快。</p>
+        <div class="callout tip">
+          <div class="t">💡 舉個你會遇到的例子</div>
+          <p>你問：「我過去處理青少年情緒議題的教案，哪些活動學員回饋最好？」</p>
+          <p><strong>網頁版：</strong>你得自己把相關教案一份份貼進去，它才能比。<br>
+          <strong>本機系統：</strong>教案本來就分類放在 <code>教案設計／情緒調節_青少年／</code>，回饋也在固定欄位，AI 直接讀完全部、跨檔比對。</p>
+        </div>
+        <p><em>好的資料結構不只方便你找，更是在「替 AI 鋪路」。</em>而這個結構，是你和 AI 一起持續優化的——這就帶到下一點。</p>
+
+        <h3 class="sub">1.4　持續改善：系統會長大，對話不會</h3>
+        <p>網頁版每一次對話都是孤島，用完即丟，下次重來。本機系統相反：每次你發現 AI 哪裡不夠好，你不是重開一個對話，而是<strong>改系統</strong>——調整分類方式、加一條規則、請 AI 寫個小工具。這些改動留下來，下次自動生效。</p>
+        <div class="flow dim"><span class="node">問</span><span class="arrow">→</span><span class="node">答</span><span class="arrow">→</span><span class="node">丟掉</span><span class="arrow">→</span><span class="node">下次重新問</span><span class="cap" style="color:#94a3b8">網頁版：原地踏步</span></div>
+        <div class="flow"><span class="node">使用</span><span class="arrow">→</span><span class="node">發現卡點</span><span class="arrow">→</span><span class="node">改規則／分類／工具</span><span class="arrow">→</span><span class="node">下次更好</span><span class="cap" style="color:var(--primary)">本機系統：螺旋上升</span></div>
+        <p>這種「持續改善」會逼你不斷思考：我的資料該怎麼分類最好找？哪一步常重複、該自動化？這個思考過程本身，就在讓你的工作方法變清晰。</p>
+
+        <h3 class="sub">1.5　用 AI 設計你自己的小工具</h3>
+        <p>這是網頁版完全做不到、本機系統最迷人的一塊。心理師的需求很特定，市面工具不一定有——你可以請 AI 直接幫你打造：</p>
+        <div class="cards">
+          <div class="card"><div class="ico">🎙️</div><h4>批次轉逐字稿</h4><p>把一週的會談錄音一次轉成文字，全程離線、不外傳。</p></div>
+          <div class="card"><div class="ico">📈</div><h4>量表趨勢圖</h4><p>把某份量表的歷次分數自動畫成趨勢，一眼看出變化。</p></div>
+          <div class="card"><div class="ico">📝</div><h4>固定欄位摘要</h4><p>會談紀錄自動整理成主訴、觀察、處遇、下次重點。</p></div>
+          <div class="card"><div class="ico">⏰</div><h4>追蹤提醒</h4><p>從紀錄抓出「下次要追蹤」的事項，排進你的提醒。</p></div>
+        </div>
+        <p>網頁版只能給你「建議」，做不到這些「動手」的事。本機系統裡，你用白話描述需求，AI 寫出小工具、在你電腦上跑，工具留著以後一鍵重用。<strong>這是把 AI 從顧問，升級成工程師＋助理。</strong></p>
+
+        <div class="vs">
+          <div class="side web"><div class="label">網頁版 AI</div><h4>聰明但失憶的陌生顧問</h4><p>每次見面都要重新自我介紹，談完就忘。</p></div>
+          <div class="mid">VS</div>
+          <div class="side sys"><div class="label">本機 AI Agent 系統</div><h4>會長大的長期夥伴</h4><p>讀過你所有檔案，還能幫你打造專屬工具。</p></div>
+        </div>
+        <div class="callout quote">對一個要長期累積教案與個案的心理師來說，這個差別不是「方便一點」，而是<strong>質變</strong>。</div>
+      </div>
+    </details>
+
+    <!-- S2 -->
+    <details class="section" id="s2" open>
+      <summary><span class="num">2</span><span>為什麼你特別需要「離線」？</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">第 1 節談的是功能上的好處；這一節談的是「非離線不可」的硬約束。</p>
+        <p>對一般工作者來說，離線講的是資料主權與累積。但對你來說處境更尖銳：<strong>個案紀錄是受倫理與法律雙重約束的高敏感資料</strong>。</p>
+        <div class="tbl"><table class="compare">
+          <thead><tr><th>風險面</th><th class="col-bad">雲端 AI 對話</th><th class="col-good">離線 AI Agent 系統</th></tr></thead>
+          <tbody>
+            <tr><td>資料落點</td><td class="bad">個案內容上傳到服務商伺服器，可能被留存、用於訓練</td><td class="good">檔案只在你的電腦，AI 在本機讀寫</td></tr>
+            <tr><td>倫理合規</td><td class="bad">違反保密義務的灰色地帶，知情同意難涵蓋</td><td class="good">符合「最小揭露」原則，無第三方傳輸</td></tr>
+            <tr><td>去識別化</td><td class="bad">上傳前必須人工塗改，容易遺漏</td><td class="good">可由本機 AI 先做去識別化，再進任何後續流程</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout redline"><div class="t">🔒 這條紅線，決定整套系統的設計</div><p>凡是碰到真實個案資料的環節，一律走離線；凡是要連網（查文獻、找網路資源、用雲端模型），一律只餵「去識別化或非個案」的內容。後面每一節，都會回到這個分界。</p></div>
+      </div>
+    </details>
+
+    <!-- S3 -->
+    <details class="section" id="s3" open>
+      <summary><span class="num">3</span><span>兩套工具怎麼分工</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">一句話：Antigravity 管「你的資料」，Codex 管「你的工具」。</p>
+        <div class="tbl"><table>
+          <thead><tr><th>面向</th><th>Gemini Antigravity（主力）</th><th>ChatGPT Codex（輔助）</th></tr></thead>
+          <tbody>
+            <tr><td>角色</td><td>系統的常駐大腦，管理本機知識庫、跑流程</td><td>寫工具腳本的外包工程師</td></tr>
+            <tr><td>資料接觸</td><td>直接讀寫個案／教案檔案（本機）</td><td>只給「非個案」的程式碼與假資料</td></tr>
+            <tr><td>強項</td><td>能操作你的檔案與工具、長脈絡、多步驟自動化</td><td>程式生成品質高、除錯快</td></tr>
+            <tr><td>定位</td><td>你每天打開的工作台</td><td>需要造新工具時才召喚的承包商</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>為什麼以 Antigravity 為基礎：</strong>它的設計本來就是「讓 AI 操作你的檔案與工具」，而不只是聊天。這正好對應你要的「讓 AI 管理一整座教案與個案知識庫」。Codex 的價值在於——當你需要一支新工具（例如把錄音轉逐字稿、把量表畫成圖），請它寫出來。但寫好的工具在你電腦上跑，餵的是你的資料，Codex 本身不接觸。</p>
+        <div class="callout redline"><div class="t">⚠️ 分工的鐵律</div><p>個案紀錄永遠不進 Codex 的對話框；進去的只有「抽掉所有個案資訊」的程式碼骨架與假資料。</p></div>
+      </div>
+    </details>
+
+    <!-- S4 -->
+    <details class="section" id="s4" open>
+      <summary><span class="num">4</span><span>系統長什麼樣子：資料夾 ＋ 四層設定</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">整個系統其實就是「一個整理好的資料夾」加上「一份教 AI 怎麼做事的說明書」。</p>
+        <div class="tree">
+D:\心理師工作站\<br>
+├── 01_教案設計\            <span class="c">← 每個主題／團體一個資料夾</span><br>
+│   ├── 情緒調節_青少年\<br>
+│   │   ├── 教案_v3.md<br>
+│   │   └── 學員回饋.md<br>
+│   └── _教案模板.md         <span class="c">← 統一格式的母版</span><br>
+├── 02_個案紀錄\            <span class="note">← 高敏感區，絕不連網</span><br>
+│   ├── _去識別化規則.md<br>
+│   ├── 個案A\              <span class="c">← 以代碼命名，不用真名</span><br>
+│   │   ├── 會談紀錄.md<br>
+│   │   └── 概念化.md<br>
+│   └── _分析輸出\           <span class="c">← AI 跨個案分析的成果</span><br>
+├── 03_行事曆\<br>
+├── 04_設計風格\            <span class="c">← 你的視覺與文字風格指紋</span><br>
+├── .agent\                 <span class="c">← 四層設定（說明書）</span><br>
+├── _參考資源\              <span class="c">← 從網路抓來的範本</span><br>
+└── tools\                  <span class="c">← Codex 幫你寫的本機工具</span>
+        </div>
+        <div class="callout key"><div class="t">🗺️ 結構本身就是給 AI 的地圖</div><p>資料夾名、檔名、<code>_</code> 開頭的母版與規則檔，都讓 AI 一眼看懂「哪裡放什麼」。你把分類設計得越清楚，AI 的整理與搜尋就越準。</p></div>
+        <h3 class="sub">四層設定：你教 AI 怎麼當你的助理</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>層級</th><th>白話解釋</th><th>你會放什麼</th></tr></thead>
+          <tbody>
+            <tr><td>角色設定<br><small>Persona</small></td><td>它是什麼樣的助理</td><td>用語精準中性、重視倫理界線、發現概念化有跳躍時直接指出</td></tr>
+            <tr><td>規則<br><small>RULES</small></td><td>絕對要遵守的底線</td><td>去識別化規則、中性用詞清單、個案資料禁止外傳</td></tr>
+            <tr><td>專業標準<br><small>Skills</small></td><td>什麼叫做得好</td><td>教案設計規格、個案概念化框架、量表判讀標準</td></tr>
+            <tr><td>流程<br><small>Workflows</small></td><td>遇到某件事的固定步驟</td><td>逐字稿整理、教案改寫、週排程生成、跨個案分析</td></tr>
+          </tbody>
+        </table></div>
+        <p>上面兩層（角色、規則）今天就能開始寫；下面兩層（專業標準、流程）建議你先用一陣子、摸出自己的需求後再建。<strong>不用急著一次到位。</strong></p>
+      </div>
+    </details>
+
+    <!-- S5 -->
+    <details class="section" id="s5" open>
+      <summary><span class="num">5</span><span>四大實際應用</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">把上面的觀念，落到你每天真正在做的四件事。</p>
+
+        <h3 class="sub">5.1　教案設計：從零散想法到統一規格</h3>
+        <p><strong>痛點：</strong>每次設計團體或課程教案，結構、時間分配、教材格式都重來一次。</p>
+        <ul>
+          <li>在 <code>_教案模板.md</code> 定義你的標準結構（暖身、主題活動、討論、收束、回家作業）。</li>
+          <li>流程 <code>/教案生成</code>：你給主題與對象（如「國中生、情緒辨識、90 分鐘」），AI 依模板產出草稿。</li>
+          <li>AI 自動套用你過去教案中「有效的活動」——因為它讀過 <code>01_教案設計</code> 底下所有累積。</li>
+          <li>課後把 <code>學員回饋.md</code> 餵回去，AI 標出哪些環節該調整。</li>
+        </ul>
+        <div class="callout tip"><div class="t">🌱 累積效應</div><p>第十份教案不是從零開始，是站在前九份的肩膀上。</p></div>
+
+        <h3 class="sub">5.2　個人設計風格統一：你的「風格指紋」</h3>
+        <p><strong>痛點：</strong>投影片、講義、給個案的衛教單張，字型、配色、語氣各自為政，看起來不像同一個人做的。</p>
+        <ul>
+          <li>在 <code>04_設計風格／style_guide.md</code> 寫死你的規格：主色、輔色、字型、標題層級、慣用句式、避用詞。</li>
+          <li>任何產出（教案、衛教單、簡報大綱）都先過這份風格指南。</li>
+        </ul>
+        <p><strong>關鍵：</strong>風格統一不是美觀問題，是專業識別。個案與機構會記得「你的東西長什麼樣」。</p>
+
+        <h3 class="sub">5.3　個人行事曆規劃</h3>
+        <p><strong>痛點：</strong>會談、督導、教案準備、行政，時間被切碎，個案追蹤容易漏。</p>
+        <ul>
+          <li>流程 <code>/週排程</code>：讀行事曆與各個案的追蹤提醒，生成本週時間表草稿，標出衝突與緩衝不足的時段。</li>
+          <li>個案追蹤：AI 從會談紀錄的「下次預計處理」欄位，自動生成提醒清單。</li>
+        </ul>
+        <div class="callout redline"><div class="t">🔒 離線分界</div><p>行事曆若要與 Google Calendar 同步，同步的是「時段與代碼」，不是個案內容。</p></div>
+
+        <h3 class="sub">5.4　個案紀錄整理與分析（核心：中性用詞 ＋ 敏感度設計）</h3>
+        <p>這是整套系統對你最有價值、也最需要謹慎的環節。</p>
+        <h4 class="subsub">逐字稿與紀錄整理</h4>
+        <ul>
+          <li>請 Codex 寫一支本機轉錄工具（完全離線）。</li>
+          <li>流程 <code>/紀錄整理</code>：錄音 → 本機轉逐字稿 → AI 依你的紀錄格式整理成 <code>會談紀錄.md</code>。</li>
+          <li>全程不連網，音檔與逐字稿都留在 <code>02_個案紀錄</code>。</li>
+        </ul>
+        <h4 class="subsub">中性用詞的調整與敏感度設計（重點）</h4>
+        <p>心理紀錄的用詞會影響三件事：個案被如何理解、紀錄被第三方（法院、保險、轉介）讀到時的後果、以及你自己的臨床判斷不被污染。在規則裡建一份<strong>中性用詞對照表</strong>，讓 AI 每次整理紀錄時自動套用：</p>
+        <div class="tbl"><table class="compare">
+          <thead><tr><th class="col-bad">評價／標籤式（避免）</th><th class="col-good">中性描述式（建議）</th></tr></thead>
+          <tbody>
+            <tr><td class="bad">個案很「抗拒」</td><td class="good">個案對某主題回應較少／轉移話題</td></tr>
+            <tr><td class="bad">個案「情緒化」</td><td class="good">個案在談及 X 時出現流淚、語速加快</td></tr>
+            <tr><td class="bad">個案「操弄」</td><td class="good">個案多次提出條件交換</td></tr>
+            <tr><td class="bad">「不配合」治療</td><td class="good">未完成上次約定的回家練習</td></tr>
+            <tr><td class="bad">「病態」依附</td><td class="good">在關係中呈現高度尋求確認的模式</td></tr>
+          </tbody>
+        </table></div>
+        <p>規則裡該寫的條目：</p>
+        <ul>
+          <li>紀錄一律用「可觀察的行為描述」取代「評價性標籤」。</li>
+          <li>區分「個案陳述」與「治療師推論」，推論須標明（避免把假設寫成事實）。</li>
+          <li>涉及診斷字眼時，標註依據（如「符合 DSM-5 X 項中的 Y、Z」）而非直接下標籤。</li>
+          <li>敏感度檢查：整理完問 AI「這份紀錄若被個案本人讀到，哪些用詞會造成傷害或誤解？」</li>
+        </ul>
+        <h4 class="subsub">跨個案分析</h4>
+        <p>累積到一定量後，AI 能做你一個人很難做的事：</p>
+        <ul>
+          <li>「我這半年處理的青少年個案，共同的卡點是什麼？」</li>
+          <li>「我對某類議題的概念化，是否有固定盲點？」</li>
+        </ul>
+        <div class="callout redline"><div class="t">🔒 這裡再次踩紅線</div><p>跨個案分析若想借助雲端模型的強推理，必須先由本機 AI 做徹底去識別化（去掉姓名、可辨識細節、機構），且最好只上傳「模式摘要」而非原始紀錄。能本機跑，就本機跑。</p></div>
+      </div>
+    </details>
+
+    <!-- S6 -->
+    <details class="section" id="s6" open>
+      <summary><span class="num">6</span><span>讓系統持續變聰明：善用網路開放資源</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">一個人的系統會卡在自己的視野；開放社群（如 GitHub）是低成本的「外部大腦」。</p>
+        <p>網路上有大量別人寫好的設定範本、流程範例與小工具。重點不是你手動去翻，而是讓 AI 幫你找、幫你篩，由你拍板：</p>
+        <div class="tbl"><table>
+          <thead><tr><th>資源類型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>角色／規則範本</td><td>參考別人怎麼設定 AI 的人格與底線</td></tr>
+            <tr><td>流程範例</td><td>借成熟的步驟設計，改成你的版本</td></tr>
+            <tr><td>本機小工具</td><td>讓 Codex 改寫成你要的功能（離線轉錄、行事曆解析）</td></tr>
+            <tr><td>書寫提示詞</td><td>中性用詞、結構化紀錄的寫法參考</td></tr>
+          </tbody>
+        </table></div>
+        <h3 class="sub">讓 AI 自己去學的機制</h3>
+        <ol>
+          <li>流程 <code>/找參考</code>：你給一個需求（如「我要一個離線逐字稿整理的流程」），AI 上網搜尋相關資源、讀說明與範例。</li>
+          <li>AI 把找到的設計<strong>摘要</strong>寫進 <code>_參考資源</code>，並標註「可以借鑑的點」。</li>
+          <li>由你判斷要不要採用——<strong>AI 提案，你拍板</strong>。</li>
+          <li>採用的話，AI 把外部範本「翻譯」成你的風格與規則的版本，而非照抄。</li>
+        </ol>
+        <h3 class="sub">持續改善循環（系統怎麼越用越好）</h3>
+        <div class="flow"><span class="node">使用</span><span class="arrow">→</span><span class="node">記錄卡點</span><span class="arrow">→</span><span class="node">找外部參考</span><span class="arrow">→</span><span class="node">改規則／流程／工具</span><span class="arrow">→</span><span class="node">再使用</span></div>
+        <ul>
+          <li>每次 AI 表現不如預期，在 <code>.agent／改善日誌.md</code> 記一條。</li>
+          <li>每月一次流程 <code>/系統健檢</code>：AI 回顧改善日誌，去網路找這些卡點有沒有現成解法，提出改進清單。</li>
+        </ul>
+        <div class="callout redline"><div class="t">⚠️ 用網路資源時的紅線</div><p>抓別人的範本、餵 Codex 寫工具都可以——但餵進去的只能是<strong>假資料與程式骨架</strong>，<strong>絕不可以是真實個案紀錄</strong>。若你想把通用方法回饋社群，也只開源「方法」，絕不開源任何可辨識的個案資訊。</p></div>
+      </div>
+    </details>
+
+    <!-- S7 -->
+    <details class="section" id="s7" open>
+      <summary><span class="num">7</span><span>上手路徑：先教案、後個案</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">教案不涉敏感資料，適合練手與建立信心；等系統與紅線設定都成熟，再讓真實個案紀錄進場。</p>
+        <div class="timeline">
+          <div class="step"><div class="when">第 1 週<small>安裝與分界</small></div><div class="what">裝好 Antigravity，建好資料夾，在規則裡寫死「個案資料離線」這條紅線。</div></div>
+          <div class="step"><div class="when">第 2-3 週<small>風格與教案</small></div><div class="what">寫風格指南，做第一份 <code>/教案生成</code>——不碰個案，是最安全的起手式。</div></div>
+          <div class="step"><div class="when">第 4 週<small>中性用詞規則</small></div><div class="what">建中性用詞對照表，拿一份「虛構」個案測試 <code>/紀錄整理</code>。</div></div>
+          <div class="step"><div class="when">第 2 個月<small>真實紀錄上線</small></div><div class="what">確認去識別化與離線都沒問題後，才用在真實個案。</div></div>
+          <div class="step"><div class="when">第 3 個月<small>工具與外援</small></div><div class="what">用 Codex 寫離線轉錄工具，啟用 <code>/找參考</code> 與 <code>/系統健檢</code>。</div></div>
+          <div class="step"><div class="when">第 6 個月<small>累積與分析</small></div><div class="what">累積足夠紀錄，試第一次跨個案分析，感受複利。</div></div>
+        </div>
+      </div>
+    </details>
+
+    <!-- S8 -->
+    <details class="section" id="s8" open>
+      <summary><span class="num">8</span><span>誠實說：限制與你該注意的事</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">這不是要勸退你，而是讓你帶著清楚的預期上路——知道風險在哪，才用得安心。</p>
+        <div class="callout redline"><div class="t">1　「離線」是否真的離線？</div><p>Antigravity 與 Codex 的底層模型多在雲端。所謂離線，指的是「你的個案<strong>檔案</strong>不上傳」，但你下的指令、AI 的推理過程仍可能經過服務商。要先弄清楚：哪些操作純本機（檔案讀寫、本機工具）、哪些會把內容送雲端（模型推理本身）。若連「指令文字」都不能外洩，可能需要本機自架模型，那是另一個層級的設定。</p></div>
+        <div class="callout redline"><div class="t">2　去識別化真的夠嗎？</div><p>去掉姓名不等於去識別。會談中的獨特細節（罕見職業、特定事件、家庭結構）組合起來仍可重新識別。AI 的去識別化只能當第一道，不能取代你的人工複查。</p></div>
+        <div class="callout key"><div class="t">3　中性用詞會不會反而失真？</div><p>過度去評價化，可能讓紀錄喪失臨床判斷的銳利度。中性是為了「可觀察、可複查」，不是為了和稀泥。推論該寫還是要寫，只是要標明它是推論。</p></div>
+        <div class="callout tip"><div class="t">4　別期待頭兩週就上手</div><p>建資料夾、設規則、理解流程，對第一次接觸的人是真實的門檻。這套系統的好處是「長期」才兌現的；頭兩週你可能覺得比直接問 ChatGPT 還麻煩。先從「教案生成」這種立刻有感的場景開始，撐過初期，就會看到複利。</p></div>
+        <div class="callout key"><div class="t">5　倫理與法規的責任，仍在你身上</div><p>工具再好，保密義務、知情同意、紀錄保存規範的責任，不會因為「AI 幫我做的」而轉移。任何新流程上線前，對照你所屬公會的倫理守則與當地個資法。</p></div>
+      </div>
+    </details>
+
+    <div class="callout quote" style="margin-top:30px">
+      <strong>一句話總結：</strong>你不需要一次建好完美系統。今天先建你的第一個資料夾、設定 AI 的角色與一條規則，從「教案生成」開始。系統不是設計出來的，是長出來的——但它需要你今天種下第一顆種子。
+    </div>
+
+  </main>
+</div>
+
+<footer class="foot">
+  <p><strong>心理師的離線 AI Agent 系統實作指南</strong></p>
+  <p>主力工具：Gemini Antigravity ＋ ChatGPT Codex　|　核心原則：資料不出本機</p>
+</footer>
+
+<button id="toTop" type="button" aria-label="回頂部">↑</button>
+
+<script>
+  /* 回頂部按鈕 */
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 600) toTop.classList.add('show'); else toTop.classList.remove('show');
+  });
+  toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  /* 點導覽連結時，自動展開對應章節 */
+  document.querySelectorAll('.toc a, .qnav a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var el = document.querySelector(this.getAttribute('href'));
+      if (el && el.tagName === 'DETAILS') el.open = true;
+    });
+  });
+
+  /* 手機版「展開全部／收合全部」切換 */
+  var btn = document.getElementById('expandAll');
+  var allOpen = true;
+  if (btn) btn.addEventListener('click', function () {
+    allOpen = !allOpen;
+    document.querySelectorAll('details.section').forEach(function (d) { d.open = allOpen; });
+    btn.textContent = allOpen ? '收合全部' : '展開全部';
+  });
+</script>
+</body>
+</html>
