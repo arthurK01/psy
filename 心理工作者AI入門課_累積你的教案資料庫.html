@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>給心理工作者的 AI 入門課：累積你的教案資料庫</title>
+<style>
+:root{
+  --bg:#f5f6f8;--surface:#ffffff;--ink:#1f2933;--ink-soft:#475569;--ink-mute:#64748b;
+  --primary:#0f766e;--primary-d:#0b5d56;--primary-l:#e6f4f1;
+  --accent:#e09f3e;--accent-l:#fbf2e0;
+  --danger:#c1432e;--danger-l:#fcebe7;--good:#2f7d54;--good-l:#e7f3ea;
+  --line:#e2e8f0;--radius:16px;
+  --shadow:0 4px 18px rgba(15,23,42,.06);--shadow-h:0 10px 30px rgba(15,23,42,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.85;-webkit-font-smoothing:antialiased}
+a{color:var(--primary-d);text-decoration:none}a:hover{text-decoration:underline}
+code{background:#eef2f1;padding:1px 6px;border-radius:5px;font-size:.86em;font-family:Consolas,"Courier New",monospace;color:var(--primary-d)}
+
+/* mobile bar */
+.mobilebar{display:none;position:sticky;top:0;z-index:40;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);align-items:center;justify-content:space-between;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top))}
+.mobilebar .ttl{font-weight:800;font-size:.95rem;color:var(--primary-d)}
+.mobilebar button{background:var(--primary-l);color:var(--primary-d);border:none;font-weight:700;font-size:.82rem;padding:7px 13px;border-radius:999px;cursor:pointer;font-family:inherit}
+
+/* hero */
+.hero{background:linear-gradient(135deg,#0f766e 0%,#115e59 55%,#134e4a 100%);color:#fff;padding:70px 24px 60px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 0%,rgba(224,159,62,.25),transparent 45%)}
+.hero-inner{max-width:860px;margin:0 auto;position:relative;z-index:1}
+.hero .eyebrow{display:inline-block;letter-spacing:.16em;font-size:.8rem;font-weight:600;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:999px;margin-bottom:20px}
+.hero h1{font-size:2.3rem;line-height:1.35;margin:0 0 16px;font-weight:800}
+.hero p{font-size:1.08rem;color:#d6efe9;margin:0 auto;max-width:600px}
+.hero .tagline{margin-top:24px;font-size:.96rem;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 20px;display:inline-block}
+
+/* layout */
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:240px 1fr;gap:40px}
+.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding:22px 0;font-size:.92rem}
+.toc h4{margin:0 0 12px;font-size:.78rem;letter-spacing:.12em;color:var(--ink-mute);text-transform:uppercase}
+.toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+.toc li{counter-increment:toc;margin:2px 0}
+.toc a{display:flex;gap:10px;align-items:baseline;padding:8px 12px;border-radius:10px;color:var(--ink-soft)}
+.toc a::before{content:counter(toc);font-weight:700;color:var(--primary);font-size:.82rem;min-width:16px}
+.toc a:hover{background:var(--primary-l);text-decoration:none;color:var(--primary-d)}
+main{padding:44px 0 80px;min-width:0}
+
+/* quick nav (mobile) */
+.qnav{display:none;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 22px}
+.qnav a{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:.85rem;font-weight:600;color:var(--ink-soft);display:flex;gap:8px;align-items:center;box-shadow:var(--shadow)}
+.qnav a .n{flex:none;width:24px;height:24px;border-radius:7px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:800}
+
+/* intro */
+.intro{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:var(--radius);padding:22px 26px;margin-bottom:26px;box-shadow:var(--shadow)}
+.intro h3{margin:0 0 10px;font-size:1.1rem;color:var(--primary-d)}
+.intro p{margin:0 0 10px;color:var(--ink-soft)}
+.intro .chip{display:inline-block;background:var(--primary-l);color:var(--primary-d);font-size:.84rem;font-weight:600;padding:5px 13px;border-radius:999px;margin:6px 6px 0 0}
+
+/* outcomes */
+.outcomes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+.outcome{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);position:relative}
+.outcome .big{font-size:1.8rem;font-weight:800;color:var(--primary);opacity:.25;position:absolute;top:10px;right:16px}
+.outcome p{margin:0;font-size:.96rem;color:var(--ink-soft)}
+.outcome strong{color:var(--ink)}
+
+/* course map */
+.map{margin:22px 0}
+.map .unit{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px;box-shadow:var(--shadow);position:relative}
+.map .conn{height:18px;width:2px;background:var(--accent);margin:0 0 0 33px}
+.map .u-n{flex:none;width:36px;height:36px;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800}
+.map .u-t{font-weight:700;color:var(--ink)}
+.map .u-d{font-size:.88rem;color:var(--ink-mute)}
+
+/* details sections */
+details.section{margin-bottom:14px;scroll-margin-top:16px}
+details.section>summary{list-style:none;cursor:pointer;display:flex;gap:14px;align-items:center;font-size:1.5rem;font-weight:800;color:var(--ink);margin:0 0 8px;padding:6px 0}
+details.section>summary::-webkit-details-marker{display:none}
+details.section>summary .num{flex:none;width:42px;height:42px;border-radius:12px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:1.05rem;font-weight:800;box-shadow:var(--shadow)}
+details.section>summary .chev{margin-left:auto;color:var(--ink-mute);font-size:.95rem;transition:.2s}
+details.section[open]>summary .chev{transform:rotate(180deg)}
+.body{padding-left:56px}
+.lead{color:var(--ink-mute);font-size:1.02rem;margin:0 0 22px}
+h3.sub{font-size:1.16rem;margin:30px 0 12px;color:var(--primary-d);font-weight:700}
+.body p{margin:0 0 14px}
+.body ul,.body ol{margin:0 0 16px;padding-left:22px}
+.body li{margin:7px 0}
+strong{color:var(--ink);font-weight:700}
+em{font-style:normal;background:var(--accent-l);padding:1px 5px;border-radius:5px;font-weight:600;color:#9a6a18}
+
+/* tables */
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;border-radius:var(--radius);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;background:var(--surface);font-size:.96rem;min-width:460px}
+thead th{background:var(--primary);color:#fff;font-weight:700;text-align:left;padding:13px 16px}
+tbody td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink-soft)}
+tbody tr:nth-child(even){background:#fafbfc}
+tbody td:first-child{font-weight:600;color:var(--ink)}
+.swipe{display:none;text-align:center;font-size:.78rem;color:var(--ink-mute);margin:-8px 0 14px}
+
+/* callouts */
+.callout{border-radius:var(--radius);padding:18px 22px;margin:22px 0;border-left:5px solid;box-shadow:var(--shadow)}
+.callout .t{font-weight:700;display:flex;gap:9px;align-items:center;margin-bottom:6px;font-size:1.02rem}
+.callout p{margin:0}.callout p+p{margin-top:7px}
+.callout.key{background:var(--primary-l);border-color:var(--primary)}.callout.key .t{color:var(--primary-d)}
+.callout.tip{background:var(--good-l);border-color:var(--good)}.callout.tip .t{color:var(--good)}
+.callout.warn{background:var(--danger-l);border-color:var(--danger)}.callout.warn .t{color:var(--danger)}
+.callout.quote{background:#f1f5f9;border-color:#94a3b8;font-size:1.05rem;color:var(--ink)}
+
+/* steps */
+.steps{counter-reset:st;margin:18px 0}
+.step{display:flex;gap:16px;padding:14px 0;border-top:1px dashed var(--line)}
+.step:first-child{border-top:none}
+.step .sn{counter-increment:st;flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)}
+.step .sn::before{content:counter(st)}
+.step .sc{flex:1}
+.step .sc h4{margin:4px 0 6px;font-size:1.04rem;color:var(--ink)}
+.step .sc p{margin:0 0 8px;font-size:.96rem;color:var(--ink-soft)}
+
+/* prompt box */
+.prompt{background:#0f2c2a;color:#e7f6f1;border-radius:12px;padding:14px 18px;margin:12px 0;font-size:.95rem;position:relative;border-left:4px solid var(--accent)}
+.prompt::before{content:"💬 對 AI 這樣說";display:block;font-size:.72rem;letter-spacing:.06em;color:#7fd1c4;margin-bottom:6px;font-weight:600}
+
+/* mock window */
+.mock{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:18px 0;box-shadow:var(--shadow-h);background:#fff}
+.mock .bar{background:#e8edf1;padding:8px 14px;display:flex;gap:6px;align-items:center}
+.mock .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.mock .bar i.r{background:#f87171}.mock .bar i.y{background:#fbbf24}.mock .bar i.g{background:#34d399}
+.mock .bar span{margin-left:10px;font-size:.8rem;color:var(--ink-mute)}
+.mock .panes{display:grid;grid-template-columns:200px 1fr;min-height:170px}
+.mock .left{background:#f7f9fa;border-right:1px solid var(--line);padding:14px;font-size:.86rem;color:var(--ink-soft)}
+.mock .left .fld{padding:3px 0;color:var(--primary-d);font-weight:600}
+.mock .left .fch{padding:2px 0 2px 14px;color:var(--ink-mute)}
+.mock .right{padding:16px;font-size:.9rem}
+.mock .right .you{background:var(--primary-l);color:var(--primary-d);padding:8px 12px;border-radius:10px;margin-bottom:8px;display:inline-block}
+.mock .right .ai{background:#f1f5f9;color:var(--ink-soft);padding:8px 12px;border-radius:10px;display:inline-block}
+
+/* before/after */
+.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin:20px 0}
+.ba .col{padding:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.ba .before{background:#fff;border:1px solid var(--line)}
+.ba .after{background:linear-gradient(160deg,#0f766e,#115e59);color:#fff}
+.ba .lbl{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;opacity:.85;margin-bottom:8px}
+.ba .before .lbl{color:var(--danger)}
+.ba .col p,.ba .col code{font-size:.9rem}
+.ba .before p{color:var(--ink-soft);margin:0}
+.ba .after div{font-family:Consolas,monospace;font-size:.84rem;line-height:1.8}
+.ba .mid{display:grid;place-items:center;color:var(--accent);font-size:1.4rem;font-weight:800;padding:0 14px}
+
+/* messy vs tidy */
+.mt{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;margin:20px 0}
+.mt .box{padding:18px;border-radius:var(--radius);box-shadow:var(--shadow);font-size:.92rem}
+.mt .messy{background:#fff;border:1px dashed var(--danger);color:var(--ink-soft)}
+.mt .tidy{background:var(--primary-l);border:1px solid var(--primary);color:var(--primary-d)}
+.mt .box h4{margin:0 0 10px;font-size:.95rem}
+.mt .messy h4{color:var(--danger)}.mt .tidy h4{color:var(--primary-d)}
+.mt .mid{text-align:center;color:var(--accent);font-size:1.5rem;font-weight:800;padding:0 12px}
+
+/* tree */
+.tree{background:#0f2c2a;color:#cdeae4;border-radius:var(--radius);padding:20px 22px;margin:18px 0;font-family:Consolas,"Courier New",monospace;font-size:.88rem;line-height:1.9;overflow-x:auto;box-shadow:var(--shadow-h)}
+.tree .c{color:#7fd1c4}
+
+/* loop */
+.loop{background:var(--surface);border:1px dashed var(--primary);border-radius:var(--radius);padding:20px;margin:20px 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:center}
+.loop .node{background:var(--primary-l);color:var(--primary-d);font-weight:600;padding:10px 16px;border-radius:10px;font-size:.92rem;text-align:center}
+.loop .arrow{color:var(--accent);font-weight:800;font-size:1.2rem}
+
+/* faq */
+.faq{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:12px 0;box-shadow:var(--shadow)}
+.faq .q{font-weight:700;color:var(--primary-d);margin:0 0 6px}
+.faq .a{margin:0;color:var(--ink-soft);font-size:.96rem}
+
+/* checklist */
+.check{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 8px;margin:18px 0;box-shadow:var(--shadow)}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;cursor:pointer;transition:.15s}
+.check label:hover{background:#f7f9fa}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--primary);flex:none;cursor:pointer}
+.check input:checked + span{color:var(--ink-mute);text-decoration:line-through}
+.check span{font-size:.98rem;color:var(--ink)}
+
+/* footer / top */
+.foot{background:#0f2c2a;color:#bcd9d3;text-align:center;padding:38px 24px;font-size:.92rem}
+.foot strong{color:#fff}
+#toTop{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:1.1rem;box-shadow:var(--shadow-h);cursor:pointer;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+#toTop.show{opacity:1;pointer-events:auto}
+
+@media(max-width:980px){
+  body{font-size:17px}
+  .mobilebar{display:flex}
+  .hero{padding:32px 20px 28px}.hero h1{font-size:1.55rem}.hero p{font-size:.96rem}.hero .tagline{font-size:.85rem;padding:11px 14px}
+  .wrap{grid-template-columns:1fr;padding:0 16px;gap:0}
+  .toc{display:none}
+  main{padding:20px 0 70px}
+  .qnav{display:grid}
+  .swipe{display:block}
+  .outcomes{grid-template-columns:1fr}
+  details.section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+  details.section>summary{font-size:1.08rem;padding:15px 16px;margin:0}
+  details.section>summary .num{width:34px;height:34px;font-size:.95rem;border-radius:10px}
+  details.section[open]>summary{border-bottom:1px solid var(--line)}
+  .body{padding:14px 16px 18px}
+  h3.sub{font-size:1.06rem}
+  .ba,.mt{grid-template-columns:1fr}
+  .ba .mid,.mt .mid{padding:8px;transform:rotate(90deg)}
+  .mock .panes{grid-template-columns:1fr}
+  .mock .left{border-right:none;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<div class="mobilebar">
+  <span class="ttl">AI 入門課 · 心理工作者</span>
+  <button id="expandAll" type="button">展開全部</button>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">給完全新手的第一堂課</span>
+    <h1>在自己的電腦上，<br>累積你的教案資料庫</h1>
+    <p>不用寫程式、不用懂技術。跟著步驟做，你會完成第一個「AI 看得懂的教案資料庫」。</p>
+    <div class="tagline">使用工具：Gemini Antigravity（一個能讀你電腦檔案的 AI 工具）</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h4>課程導覽</h4>
+    <ol>
+      <li><a href="#s1">為什麼搬到自己電腦</a></li>
+      <li><a href="#s2">什麼是「資料叢集」</a></li>
+      <li><a href="#s3">第一次設定（新手步驟）</a></li>
+      <li><a href="#s4">整理第一份教案</a></li>
+      <li><a href="#s5">做出你的完整投影片</a></li>
+      <li><a href="#s6">養成累積的習慣</a></li>
+      <li><a href="#aa">好指令的小公式</a></li>
+      <li><a href="#ab">提示詞參考卡</a></li>
+      <li><a href="#faq">常見疑問</a></li>
+      <li><a href="#todo">第一週行動清單</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section class="intro">
+      <h3>關於這份講義</h3>
+      <p>這份講義是給<strong>你</strong>看的——一位想用 AI 幫忙、但還沒碰過程式、第一次聽到 Antigravity 的心理工作者。</p>
+      <p>全程白話，不需要任何程式基礎。我們只專心打好地基：<strong>累積資料、做教案、做投影片</strong>。這堂課<strong>先不碰個案紀錄</strong>，也不追求複雜系統。</p>
+      <div>
+        <span class="chip">為什麼搬到電腦</span>
+        <span class="chip">資料叢集</span>
+        <span class="chip">整理教案</span>
+        <span class="chip">產出投影片</span>
+        <span class="chip">持續累積</span>
+      </div>
+    </section>
+
+    <h3 class="sub" style="margin-top:8px">這堂課結束後，你會做到三件事</h3>
+    <div class="outcomes">
+      <div class="outcome"><span class="big">1</span><p>看懂<strong>為什麼</strong>要把 AI 從網頁，搬到自己的電腦上。</p></div>
+      <div class="outcome"><span class="big">2</span><p>建好一個整理過的資料夾，<strong>讓 AI 能讀、能幫你分析</strong>。</p></div>
+      <div class="outcome"><span class="big">3</span><p>用 AI 整理出<strong>統一格式的教案</strong>，並一步步做出一份<strong>投影片草稿</strong>。</p></div>
+    </div>
+
+    <h3 class="sub">課程地圖（先看全貌）</h3>
+    <div class="map">
+      <div class="unit"><span class="u-n">1</span><div><div class="u-t">為什麼搬到自己電腦？</div><div class="u-d">搞懂「為什麼」（觀念）</div></div></div>
+      <div class="conn"></div>
+      <div class="unit"><span class="u-n">2</span><div><div class="u-t">什麼是「資料叢集」？</div><div class="u-d">把散落的東西收成一團</div></div></div>
+      <div class="conn"></div>
+      <div class="unit"><span class="u-n">3</span><div><div class="u-t">第一次設定</div><div class="u-d">照著點就好，新手友善</div></div></div>
+      <div class="conn"></div>
+      <div class="unit"><span class="u-n">4</span><div><div class="u-t">整理你的第一份教案</div><div class="u-d">亂 → 整齊</div></div></div>
+      <div class="conn"></div>
+      <div class="unit"><span class="u-n">5</span><div><div class="u-t">做出你的完整投影片</div><div class="u-d">大綱→確認→風格生成→微調＋風格模板</div></div></div>
+      <div class="conn"></div>
+      <div class="unit"><span class="u-n">6</span><div><div class="u-t">持續累積，越用越好用</div><div class="u-d">讓資料庫長大</div></div></div>
+    </div>
+
+    <!-- S1 -->
+    <details class="section" id="s1" open>
+      <summary><span class="num">1</span><span>為什麼要把 AI 搬到自己的電腦上？</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <h3 class="sub">你現在大概是這樣用 AI 的</h3>
+        <p>打開瀏覽器 → 進 ChatGPT 或 Gemini 網頁 → 貼上內容、問問題 → 得到回答 → 關掉視窗。很方便，但你可能遇過這些狀況：</p>
+        <ul>
+          <li>上週請它改的教案，這週它完全不記得了，又要重講一遍。</li>
+          <li>三個月前它給過很棒的活動點子，現在翻對話紀錄怎麼也找不到。</li>
+          <li>它只能「用講的」給建議，沒辦法真的幫你把一疊資料整理好、存起來。</li>
+        </ul>
+        <h3 class="sub">一個簡單的比喻</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>　</th><th>網頁版 AI</th><th>在你電腦上的 AI</th></tr></thead>
+          <tbody>
+            <tr><td>它像誰</td><td>很聰明、但每次見面都失憶的路人顧問</td><td>坐在你辦公室、看過你所有檔案的助理</td></tr>
+            <tr><td>看得到什麼</td><td>只有你「這次」貼給它的那一段</td><td>你整個資料夾裡累積的教案與筆記</td></tr>
+            <tr><td>講完之後</td><td>對話關掉就忘了</td><td>成果存成檔案，永遠留在你電腦裡</td></tr>
+          </tbody>
+        </table></div>
+        <p class="swipe">← 左右滑動看完整表格 →</p>
+        <div class="callout quote">網頁版 AI 每次都從零開始；在你電腦上的 AI，會站在你「過去累積」的基礎上，幫你做得更快、更像你的風格。<br><strong>這堂課要做的，就是把你「過去的累積」放到一個 AI 看得到的地方。</strong></div>
+      </div>
+    </details>
+
+    <!-- S2 -->
+    <details class="section" id="s2" open>
+      <summary><span class="num">2</span><span>核心觀念：什麼是「資料叢集」？</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">「資料叢集」聽起來很專業，其實就是一句話：<strong>一個整理好、分好類的資料夾</strong>。</p>
+        <div class="mt">
+          <div class="box messy">
+            <h4>😵 現在：散落各處</h4>
+            信箱附件裡的某份 Word、跟同事的對話、桌面「新增資料夾(3)」、隨身碟角落、雲端還沒整理的一堆……<br><br><strong>AI 看不到，你自己也常找不到。</strong>
+          </div>
+          <div class="mid">→</div>
+          <div class="box tidy">
+            <h4>😌 整理成資料叢集</h4>
+            一個資料夾，依主題分好類，檔名清楚。<br><br><strong>好找，而且 AI 一次讀得到全部。</strong>
+          </div>
+        </div>
+        <h3 class="sub">為什麼「整理過」對 AI 特別重要</h3>
+        <p>當你的資料有清楚的資料夾名稱、檔名、分類，AI 讀的時候等於<strong>先拿到一張地圖</strong>，整理和比對就又快又準。例如你問：</p>
+        <div class="prompt">我過去做過的情緒主題教案，有哪些暖身活動？</div>
+        <ul>
+          <li><strong>還在散落狀態：</strong>AI 看不到，你得自己一份份翻、一份份貼給它。</li>
+          <li><strong>已收成資料叢集：</strong>AI 直接讀完「情緒主題」資料夾裡所有教案，幫你整理成一張清單。</li>
+        </ul>
+        <div class="callout key"><div class="t">🗝️ 一句話記住</div><p>你越花一點心思分類，AI 就越幫得上忙。這是雙向的投資。</p></div>
+      </div>
+    </details>
+
+    <!-- S3 -->
+    <details class="section" id="s3" open>
+      <summary><span class="num">3</span><span>第一次設定（給完全新手）</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">別緊張，你只要會「點滑鼠」和「打字」就能完成。提醒：不同版本的畫面文字可能略有差異，看到類似意思的按鈕就對了。</p>
+        <div class="steps">
+          <div class="step"><span class="sn"></span><div class="sc"><h4>安裝 Antigravity</h4><p>用瀏覽器搜尋「Antigravity」進官方下載頁，下載對應你電腦的版本（Windows 或 Mac），照畫面安裝。第一次打開可能要用 Google 帳號登入。</p></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>先在電腦上建一個「家」（資料夾）</h4><p>在「文件」或「桌面」按右鍵 → 新增資料夾，取名 <code>我的教案庫</code>，裡面先建 2 至 3 個你最常做的主題子資料夾：</p>
+            <div class="tree">我的教案庫\<br>├── 情緒主題\<br>├── 親子主題\<br>├── 投影片素材\<br>└── 草稿與點子\</div>
+            <p>不用一次想到完美，之後隨時能加。</p></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>用 Antigravity 打開這個資料夾</h4><p>上方選單找到「打開資料夾 / Open Folder」，選你剛建的 <code>我的教案庫</code>。左邊出現你的檔案，就代表 AI 現在「看得到」它們了。畫面大致長這樣：</p>
+            <div class="mock">
+              <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>Antigravity　—　我的教案庫</span></div>
+              <div class="panes">
+                <div class="left"><div class="fld">📁 我的教案庫</div><div class="fch">📁 情緒主題</div><div class="fch">📁 親子主題</div><div class="fch">📁 投影片素材</div></div>
+                <div class="right"><div class="you">你：幫我看一下這個資料夾裡有什麼</div><br><div class="ai">AI：我看到 3 個子資料夾：情緒主題、親子主題、投影片素材……</div></div>
+              </div>
+            </div></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>第一次跟它說話</h4><p>在右邊對話框打第一句，確認它真的讀到了：</p>
+            <div class="prompt">請看一下這個資料夾，告訴我裡面現在有哪些檔案和子資料夾。</div>
+            <p>如果它能正確說出你建的子資料夾，恭喜——地基打好了。</p></div></div>
+        </div>
+      </div>
+    </details>
+
+    <!-- S4 -->
+    <details class="section" id="s4" open>
+      <summary><span class="num">4</span><span>第一個成果：整理你的第一份教案</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">把一份「亂亂的舊教案」變成「乾淨、統一格式」的教案。</p>
+        <div class="steps">
+          <div class="step"><span class="sn"></span><div class="sc"><h4>把舊教案放進資料夾</h4><p>把手邊任何一份現成教案（Word、PDF、或純文字筆記）複製到對應子資料夾，例如 <code>情緒主題\</code>。</p></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>請 AI 整理成統一格式</h4>
+            <div class="prompt">請讀「情緒主題」資料夾裡那份教案，幫我整理成統一格式，包含：主題、對象、時間、目標、暖身活動、主要活動、討論問題、結束與回家作業。整理好存成一個新的 Markdown 檔。</div></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>看看前後差別</h4>
+            <div class="ba">
+              <div class="col before"><div class="lbl">整理前（你丟進去的）</div><p>一大段文字，活動跟目標混在一起，時間沒寫清楚，每份格式都不一樣。</p></div>
+              <div class="mid">→</div>
+              <div class="col after"><div class="lbl">整理後（AI 產出）</div><div># 情緒辨識教案<br>- 對象：國中生<br>- 時間：90 分鐘<br>- 目標：說出三種情緒<br>## 暖身活動（15 分鐘）<br>……欄位清楚、好讀好找</div></div>
+            </div></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>建立你的「教案模板」（重要）</h4><p>請 AI 把這個格式另存成空白模板，以後每份都照它做，格式就統一：</p>
+            <div class="prompt">把剛剛的格式做成一份空白的教案模板，存成 _教案模板.md，欄位留空讓我之後填。</div>
+            <p>小技巧：檔名前加底線 <code>_</code>，它通常會排在資料夾最上面，好找。</p></div></div>
+        </div>
+        <div class="callout tip"><div class="t">✅ 做到這裡，你完成了兩件事</div><p>第一份整齊教案，加上一個可以重複使用的模板。</p></div>
+      </div>
+    </details>
+
+    <!-- S5 -->
+    <details class="section" id="s5" open>
+      <summary><span class="num">5</span><span>從累積內容，到一份完整投影片</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">這一單元最重要，分成兩條路：主流程（5.1 至 5.4）＋ 進階風格模板（5.5）。你永遠是主導者——AI 出草稿，你做決定。下面每一步都附「可直接複製去改的指令」。</p>
+
+        <p style="font-weight:700;color:var(--primary-d);margin:0 0 6px">主流程</p>
+        <div class="loop">
+          <span class="node">教案</span><span class="arrow">→</span>
+          <span class="node">產大綱</span><span class="arrow">→</span>
+          <span class="node">你確認／改</span><span class="arrow">→</span>
+          <span class="node">指定風格配色生成</span><span class="arrow">→</span>
+          <span class="node">你微調</span><span class="arrow">→</span>
+          <span class="node">完成</span>
+        </div>
+        <p style="font-weight:700;color:var(--primary-d);margin:14px 0 6px">進階：讓風格統一</p>
+        <div class="loop">
+          <span class="node">過去的投影片</span><span class="arrow">→</span>
+          <span class="node">請 AI 分析</span><span class="arrow">→</span>
+          <span class="node">產出「風格規則」</span><span class="arrow">→</span>
+          <span class="node">之後生成都遵守</span>
+        </div>
+
+        <h3 class="sub">5.1　請 AI 依教案產出投影片大綱</h3>
+        <div class="prompt">依照剛剛整理好的這份情緒辨識教案，幫我規劃投影片大綱。每張投影片給我：標題、3 至 5 個重點、以及這張要帶的活動或提問。</div>
+        <div class="tree" style="color:#cdeae4"><span class="c">第 1 張｜課程介紹</span><br>　- 今天的主題：認識自己的情緒<br>　- 三個目標、一句開場提問<br><br><span class="c">第 2 張｜暖身：情緒猜猜看</span><br>　- 規則說明、帶一個例子、預留 10 分鐘</div>
+
+        <h3 class="sub">5.2　確認並修改大綱（這步別跳過）</h3>
+        <p>AI 給的是草稿，<strong>你一定要讀過、改成你要的</strong>。直接用白話告訴它哪裡要動，一次講清楚：</p>
+        <div class="prompt">這份大綱方向我喜歡。但有兩個地方要改：第 3 張的活動換成「角色扮演」；第 5 張內容太多，幫我拆成兩張。其他不變，更新給我。</div>
+        <div class="prompt">第 2 張的重點太多，精簡成 3 點，而且用更口語、適合對國中生說的語氣。</div>
+
+        <h3 class="sub">5.3　指定細節、風格、配色，請 AI 生成投影片</h3>
+        <p>大綱定案後，把你要的「樣子」講得越具體，成品越接近你想要的。好的生成指令通常包含這幾塊：<strong>對象、語氣、配色、每頁規則、講者備註、輸出成什麼</strong>。</p>
+        <div class="prompt">請依照這份已確認的大綱，幫我做出完整的投影片內容。要求：<br>1. 對象與語氣：國中生，溫暖、輕鬆，不要太正式。<br>2. 配色：主色用大地綠，輔色用暖橘。<br>3. 每張投影片：一個主標題、最多 4 個短句重點（每句不超過 15 字）、底部一句引導提問。<br>4. 每張後面附「講者備註」，寫我上課時可以怎麼說。<br>5. 做成一份我可以預覽的投影片草稿檔。</div>
+        <div class="callout warn"><div class="t">🙋 老實說（先有預期）</div><p>AI 能把「每一頁的內容、順序、風格規則」做到八成並產出草稿。但最後的精細排版、動畫、換圖，通常還是在 PowerPoint 或 Google 簡報裡完成。把 AI 當成「幫你把骨架和血肉都長好」的人，最後一哩的化妝由你來。</p></div>
+
+        <h3 class="sub">5.4　拿到草稿後，自己再微調</h3>
+        <p>不滿意就繼續用白話請它改，一次改一個地方最好掌握：</p>
+        <div class="prompt">整體不錯，但語氣再活潑一點，每張幫我加一個適合的 emoji 當視覺提示。</div>
+        <div class="prompt">第 4 張太滿了，幫我拆成兩張，節奏放慢。</div>
+        <div class="prompt">所有投影片的頁尾，統一加上機構名稱和頁碼。</div>
+
+        <h3 class="sub">5.5　進階：用過去的投影片，做出你的「風格模板規則」</h3>
+        <p>如果你手邊已經有做過的投影片，可以反過來——<strong>讓 AI 學你的風格</strong>，以後生成的都自動統一。</p>
+        <div class="steps">
+          <div class="step"><span class="sn"></span><div class="sc"><h4>把舊投影片放進素材夾</h4><p>把幾份過去的投影片（或匯出的 PDF）放進 <code>投影片素材\</code>。</p></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>請 AI 分析並寫成規則</h4>
+            <div class="prompt">我把過去幾份投影片放進了「投影片素材」資料夾。請閱讀它們，分析我的排版與風格習慣：常用的標題大小、配色、每頁的文字量、慣用的版面結構。整理成一份「投影片風格規則」，存成 _投影片風格規則.md。</div></div></div>
+          <div class="step"><span class="sn"></span><div class="sc"><h4>以後生成都套用這份規則</h4>
+            <div class="prompt">以後我請你做投影片時，一律遵守 _投影片風格規則.md 裡的規則。</div>
+            <div class="prompt">請依照 _投影片風格規則.md 的規範，把這份新教案做成投影片。</div></div></div>
+        </div>
+        <div class="callout key"><div class="t">🎯 這就是你的「風格指紋」</div><p>不管哪一天、做哪個主題，你的投影片都會有一致的樣子。順便把常用的圖片、案例、講義也丟進 <code>投影片素材\</code>，AI 規劃時就能建議「這張可以放你之前那張情緒溫度計圖」。</p></div>
+      </div>
+    </details>
+
+    <!-- S6 -->
+    <details class="section" id="s6" open>
+      <summary><span class="num">6</span><span>養成習慣，讓資料庫越用越好用</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">這套方法的威力不在第一天，而在「持續累積」。重點是養成一個小習慣。</p>
+        <div class="loop">
+          <span class="node">做完一件事</span><span class="arrow">→</span>
+          <span class="node">存回對的資料夾</span><span class="arrow">→</span>
+          <span class="node">AI 多讀到一份累積</span><span class="arrow">→</span>
+          <span class="node">建議越來越像「你」</span><span class="arrow">↻</span>
+        </div>
+        <h3 class="sub">一個簡單的每週小流程</h3>
+        <p><strong>平常（隨手做）：</strong>任何教案、點子、好用的活動，存進對應資料夾。</p>
+        <p><strong>每週一次，請 AI 幫你看一遍：</strong></p>
+        <div class="prompt">幫我看一下這個資料夾，這週新增了哪些檔案？有沒有放錯位置、或還沒分類好的？給我建議。</div>
+        <p><strong>每月一次，請 AI 做跨教案整理：</strong></p>
+        <div class="prompt">把我所有情緒主題教案裡的「暖身活動」，整理成一張清單，並標出哪幾個重複、哪幾個我可能可以合併。</div>
+        <h3 class="sub">累積三個月後，你會感覺到的變化</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>時間</th><th>你的資料庫</th><th>AI 幫你的程度</th></tr></thead>
+          <tbody>
+            <tr><td>第 1 週</td><td>幾份教案 ＋ 一個模板</td><td>幫你整理格式</td></tr>
+            <tr><td>第 1 個月</td><td>十幾份教案、分好類</td><td>開始能引用你過去的內容</td></tr>
+            <tr><td>第 3 個月</td><td>各主題都有累積</td><td>新教案做得又快又像你的風格</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <!-- Appendix A -->
+    <details class="section" id="aa" open>
+      <summary><span class="num">A</span><span>附錄：下一個「好指令」的小公式</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">不知道怎麼跟 AI 講？把這四塊填滿就行。</p>
+        <div class="tree" style="color:#e7f6f1;text-align:center;font-size:.92rem">【要它做什麼】＋【根據哪份資料／資料夾】<br>＋【要符合什麼條件或格式】＋【結果存去哪】</div>
+        <div class="tbl"><table>
+          <thead><tr><th>公式的一塊</th><th>你可以怎麼寫</th></tr></thead>
+          <tbody>
+            <tr><td>要它做什麼</td><td>「幫我整理成統一格式」</td></tr>
+            <tr><td>根據哪份資料</td><td>「情緒主題資料夾裡那份教案」</td></tr>
+            <tr><td>要什麼條件／格式</td><td>「包含目標、暖身、主要活動、討論」</td></tr>
+            <tr><td>結果存去哪</td><td>「存成一個新的 Markdown 檔」</td></tr>
+          </tbody>
+        </table></div>
+        <p>把四塊接起來，就是一個清楚的好指令。<em>越具體，AI 越不會亂猜。</em></p>
+        <div class="callout tip"><div class="t">💡 三個小訣竅</div><p>1. 一次只交代一件事，做完再下一個。<br>2. 不滿意就直接說哪裡不對，請它改——它不會生氣，可以一直改。<br>3. 看不懂它做了什麼，就問：「你剛剛做了什麼？用白話跟我說。」</p></div>
+      </div>
+    </details>
+
+    <!-- Appendix B -->
+    <details class="section" id="ab" open>
+      <summary><span class="num">B</span><span>附錄：提示詞參考卡（可直接複製）</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">把這張當小抄。需要時複製，把〔括號〕內換成你的內容。</p>
+
+        <h3 class="sub">A. 開始與確認</h3>
+        <div class="prompt">請看一下這個資料夾，告訴我裡面有哪些檔案和子資料夾。</div>
+
+        <h3 class="sub">B. 整理教案</h3>
+        <div class="prompt">請讀〔某資料夾〕裡那份教案，整理成統一格式，包含：主題、對象、時間、目標、暖身活動、主要活動、討論問題、結束與回家作業。存成新的 Markdown 檔。</div>
+        <div class="prompt">把剛剛的格式做成空白模板，存成 _教案模板.md，欄位留空讓我之後填。</div>
+
+        <h3 class="sub">C. 投影片：生成大綱</h3>
+        <div class="prompt">依照〔某份教案〕，規劃投影片大綱。每張給我：標題、3 至 5 個重點、要帶的活動或提問。</div>
+
+        <h3 class="sub">D. 投影片：修改大綱</h3>
+        <div class="prompt">方向我喜歡，但〔第幾張〕改成〔……〕，〔第幾張〕拆成兩張，其他不變，更新給我。</div>
+
+        <h3 class="sub">E. 投影片：指定風格生成</h3>
+        <div class="prompt">依照已確認的大綱做出完整投影片內容。對象〔……〕、語氣〔……〕、配色〔主色／輔色〕、每張最多 4 個短句重點、附講者備註、做成可預覽的草稿檔。</div>
+
+        <h3 class="sub">F. 投影片：拿到草稿後微調</h3>
+        <div class="prompt">語氣再活潑一點，每張加一個合適的 emoji。</div>
+        <div class="prompt">〔第幾張〕太滿，拆成兩張。</div>
+        <div class="prompt">所有頁尾統一加機構名稱和頁碼。</div>
+
+        <h3 class="sub">G. 投影片：讓 AI 學你的風格、做出規則</h3>
+        <div class="prompt">閱讀「投影片素材」裡我過去的投影片，分析我的標題大小、配色、每頁文字量、版面結構，整理成 _投影片風格規則.md。</div>
+        <div class="prompt">以後做投影片一律遵守 _投影片風格規則.md。</div>
+
+        <h3 class="sub">H. 持續累積與整理</h3>
+        <div class="prompt">看一下這個資料夾，這週新增了什麼？有沒有放錯或沒分類好的？</div>
+        <div class="prompt">把所有〔某主題〕教案的〔某個環節〕整理成一張清單，標出重複的。</div>
+      </div>
+    </details>
+
+    <!-- FAQ -->
+    <details class="section" id="faq" open>
+      <summary><span class="num">?</span><span>常見疑問</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <div class="faq"><p class="q">Q1　我完全不會寫程式，真的可以嗎？</p><p class="a">可以。你從頭到尾都是「用中文打字交代它做事」，不需要寫任何程式碼。</p></div>
+        <div class="faq"><p class="q">Q2　我的個案紀錄可以丟進去嗎？</p><p class="a">這堂課請「先不要」。個案資料牽涉保密與倫理，需要更謹慎的設定，是進階主題。先用沒有敏感資料的教案與投影片把工具練熟再說。</p></div>
+        <div class="faq"><p class="q">Q3　要花多久才會覺得有用？</p><p class="a">整理第一份教案，當天就有感。真正的威力要累積一陣子——所以重點是「開始，並且持續存進去」。</p></div>
+        <div class="faq"><p class="q">Q4　那 Codex 呢？我也聽過。</p><p class="a">Codex 是另一套類似工具，比較偏寫程式。這堂課先專心用 Antigravity 就好，不用同時學兩套，避免一開始就被淹沒。</p></div>
+        <div class="callout warn"><div class="t">⚠️ 一個安全提醒</div><p>在你還沒學會「離線與去識別化」之前，請勿把含真實個案姓名或可辨識細節的紀錄，放進任何會連網的 AI 工具。先從教案練起。</p></div>
+      </div>
+    </details>
+
+    <!-- TODO -->
+    <details class="section" id="todo" open>
+      <summary><span class="num">✓</span><span>你的第一週行動清單</span><span class="chev">▼</span></summary>
+      <div class="body">
+        <p class="lead">照著打勾，一週就能完成這堂課的全部地基（勾選狀態僅供你自己參考）。</p>
+        <div class="check">
+          <label><input type="checkbox"><span>裝好 Antigravity，並能成功打開。</span></label>
+          <label><input type="checkbox"><span>建好 <code>我的教案庫</code> 資料夾，裡面有 2 至 3 個主題子資料夾。</span></label>
+          <label><input type="checkbox"><span>用 Antigravity 打開這個資料夾，並讓 AI 正確說出裡面有什麼。</span></label>
+          <label><input type="checkbox"><span>丟一份舊教案進去，請 AI 整理成統一格式。</span></label>
+          <label><input type="checkbox"><span>存好一份 <code>_教案模板.md</code>。</span></label>
+          <label><input type="checkbox"><span>請 AI 依教案產出一份投影片大綱，並確認、修改成你要的。</span></label>
+          <label><input type="checkbox"><span>指定風格與配色，請 AI 生成一份投影片草稿，再自己微調。</span></label>
+          <label><input type="checkbox"><span>（進階）把過去投影片放進素材夾，請 AI 做出 <code>_投影片風格規則.md</code>。</span></label>
+          <label><input type="checkbox"><span>養成習慣：這週做的東西，都存回對的資料夾。</span></label>
+        </div>
+        <div class="callout quote">你不需要一次就建好完美系統。今天先建第一個資料夾、整理第一份教案。<br><strong>資料庫不是「設計」出來的，是一份一份「累積」出來的——而你今天就可以開始。</strong></div>
+      </div>
+    </details>
+
+  </main>
+</div>
+
+<footer class="foot">
+  <p><strong>給心理工作者的 AI 入門課</strong></p>
+  <p>核心：累積 AI 看得懂的資料　|　產出你自己的教案與投影片　|　使用工具：Gemini Antigravity</p>
+</footer>
+
+<button id="toTop" type="button" aria-label="回頂部">↑</button>
+
+<script>
+  var toTop=document.getElementById('toTop');
+  window.addEventListener('scroll',function(){if(window.scrollY>600)toTop.classList.add('show');else toTop.classList.remove('show');});
+  toTop.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  document.querySelectorAll('.toc a, .qnav a').forEach(function(a){
+    a.addEventListener('click',function(){var el=document.querySelector(this.getAttribute('href'));if(el&&el.tagName==='DETAILS')el.open=true;});
+  });
+  var btn=document.getElementById('expandAll'),allOpen=true;
+  if(btn)btn.addEventListener('click',function(){allOpen=!allOpen;document.querySelectorAll('details.section').forEach(function(d){d.open=allOpen;});btn.textContent=allOpen?'收合全部':'展開全部';});
+</script>
+</body>
+</html>
